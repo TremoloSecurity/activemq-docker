@@ -7,7 +7,8 @@ ENV JDK_VERSION=1.8.0 \
     DBCP_VERSION=1.2.2 \
     MYSQL_VERSION=8.0.12 \
     MARIADB_VERSION=2.3.0 \
-    COMMONS_POOL_VERSION=1.6
+    COMMONS_POOL_VERSION=1.6 \
+    MS_SQL_SERVER_VERSION=7.0.0.jre8
 
 LABEL io.k8s.description="Platform for deploying kubernetes artifacts" \
       io.k8s.display-name="Kubernetes Artifact Deployer" 
@@ -28,8 +29,11 @@ RUN apt-get update;apt-get -y install openjdk-8-jdk-headless curl apt-transport-
     curl -L -o /usr/local/activemq/lib/mysql-connector-java-$MYSQL_VERSION.jar https://search.maven.org/remotecontent?filepath=mysql/mysql-connector-java/$MYSQL_VERSION/mysql-connector-java-$MYSQL_VERSION.jar && \
     curl -L -o /usr/local/activemq/lib/mariadb-java-client-$MARIADB_VERSION.jar https://search.maven.org/remotecontent?filepath=org/mariadb/jdbc/mariadb-java-client/$MARIADB_VERSION/mariadb-java-client-$MARIADB_VERSION.jar && \
     curl -L -o /usr/local/activemq/lib/commons-pool-$COMMONS_POOL_VERSION.jar https://search.maven.org/remotecontent?filepath=commons-pool/commons-pool/$COMMONS_POOL_VERSION/commons-pool-$COMMONS_POOL_VERSION.jar && \
+    curl -L -o /usr/local/activemq/lib/mssql-jdbc-$MS_SQL_SERVER_VERSION.jar https://search.maven.org/remotecontent?filepath=com/microsoft/sqlserver/mssql-jdbc/$MS_SQL_SERVER_VERSION/mssql-jdbc-$MS_SQL_SERVER_VERSION.jar && \
     chown -R activemq:activemq /usr/local/activemq 
 
 USER 431
 
 CMD ["/usr/local/activemq/bin/activemq",  "console","xbean:file:/etc/activemq/activemq.xml"]
+
+
