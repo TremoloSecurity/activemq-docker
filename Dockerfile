@@ -17,7 +17,9 @@ RUN groupadd -r activemq -g 433 && \
     useradd -u 431 -r -g activemq -d /usr/local/activemq -s /sbin/nologin -c "ActiveMQ Docker image user" activemq && \
     mkdir /usr/local/activemq
 
-RUN apt-get update;apt-get -y install openjdk-8-jdk-headless curl apt-transport-https gnupg && \
+ADD health_check.sh /usr/bin/health_check.sh
+
+RUN apt-get update;apt-get -y install openjdk-8-jdk-headless curl apt-transport-https gnupg jq && \
     curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
     echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list && \
     apt-get update; apt-get install -y kubectl ; apt-get -y upgrade;apt-get clean;rm -rf /var/lib/apt/lists/*; \
@@ -30,7 +32,8 @@ RUN apt-get update;apt-get -y install openjdk-8-jdk-headless curl apt-transport-
     curl -L -o /usr/local/activemq/lib/mariadb-java-client-$MARIADB_VERSION.jar https://search.maven.org/remotecontent?filepath=org/mariadb/jdbc/mariadb-java-client/$MARIADB_VERSION/mariadb-java-client-$MARIADB_VERSION.jar && \
     curl -L -o /usr/local/activemq/lib/commons-pool-$COMMONS_POOL_VERSION.jar https://search.maven.org/remotecontent?filepath=commons-pool/commons-pool/$COMMONS_POOL_VERSION/commons-pool-$COMMONS_POOL_VERSION.jar && \
     curl -L -o /usr/local/activemq/lib/mssql-jdbc-$MS_SQL_SERVER_VERSION.jar https://search.maven.org/remotecontent?filepath=com/microsoft/sqlserver/mssql-jdbc/$MS_SQL_SERVER_VERSION/mssql-jdbc-$MS_SQL_SERVER_VERSION.jar && \
-    chown -R activemq:activemq /usr/local/activemq 
+    chown -R activemq:activemq /usr/local/activemq && \
+    chmod +x /usr/bin/health_check.sh
 
 USER 431
 
