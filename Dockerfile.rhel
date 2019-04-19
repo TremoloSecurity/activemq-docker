@@ -24,7 +24,7 @@ LABEL name="ActiveMQ" \
       io.openshift.expose-services="61616:tcp,8162:https" \
       io.openshift.tags="messaging" 
 
-
+COPY licenses /licenses
 
 RUN groupadd -r activemq -g 433 && \
     useradd -u 431 -r -g activemq -d /usr/local/activemq -s /sbin/nologin -c "ActiveMQ Docker image user" activemq && \
