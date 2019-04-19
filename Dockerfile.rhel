@@ -1,0 +1,52 @@
+FROM registry.access.redhat.com/ubi7-dev-preview/ubi:latest
+
+MAINTAINER Tremolo Security, Inc. - Docker <docker@tremolosecurity.com>
+
+ENV JDK_VERSION=1.8.0 \
+    ACTIVEMQ_VERSION=5.15.9 \
+    DBCP_VERSION=1.2.2 \
+    MYSQL_VERSION=8.0.12 \
+    MARIADB_VERSION=2.3.0 \
+    COMMONS_POOL_VERSION=1.6 \
+    MS_SQL_SERVER_VERSION=7.0.0.jre8 \
+    BUILDER_VERSION=1.0 
+
+LABEL name="ActiveMQ" \
+      vendor="Tremolo Security, Inc." \
+      version="1.0.0" \
+      release="2019041901" \
+      url="https://www.tremolosecurity.com/" \
+      summary="ActiveMQ deployment designed to work with the Orchestra applications, this container is NOT designed for general use of ActiveMQ" \
+      description="ActiveMQ container used for the Orchestra platform." \
+      run="Only use in combination with the OpenUnison operator" \
+      io.k8s.description="ActiveMQ for use with Orchestra" \
+      io.k8s.display-name="ActiveMQ for use with Orchestra" \
+      io.openshift.expose-services="61616:tcp,8162:https" \
+      io.openshift.tags="messaging" 
+
+
+
+RUN groupadd -r activemq -g 433 && \
+    useradd -u 431 -r -g activemq -d /usr/local/activemq -s /sbin/nologin -c "ActiveMQ Docker image user" activemq && \
+    mkdir /usr/local/activemq
+
+ADD health_check.sh /usr/bin/health_check.sh
+
+RUN yum -y install curl java-1.8.0-openjdk-headless.x86_64 wget unzip;yum -y upgrade;yum clean all && \
+    cd /tmp && \
+    curl -L -o /tmp/apache-activemq-$ACTIVEMQ_VERSION-bin.tar.gz http://www.apache.org/dyn/closer.cgi?filename=/activemq/$ACTIVEMQ_VERSION/apache-activemq-$ACTIVEMQ_VERSION-bin.tar.gz\&action=download && \
+    tar -xvzf apache-activemq-$ACTIVEMQ_VERSION-bin.tar.gz && \
+    mv apache-activemq-$ACTIVEMQ_VERSION/* /usr/local/activemq/ && \
+    curl -L -o /usr/local/activemq/lib/commons-dbcp-$DBCP_VERSION.jar  https://search.maven.org/remotecontent?filepath=commons-dbcp/commons-dbcp/$DBCP_VERSION/commons-dbcp-$DBCP_VERSION.jar && \
+    curl -L -o /usr/local/activemq/lib/mysql-connector-java-$MYSQL_VERSION.jar https://search.maven.org/remotecontent?filepath=mysql/mysql-connector-java/$MYSQL_VERSION/mysql-connector-java-$MYSQL_VERSION.jar && \
+    curl -L -o /usr/local/activemq/lib/mariadb-java-client-$MARIADB_VERSION.jar https://search.maven.org/remotecontent?filepath=org/mariadb/jdbc/mariadb-java-client/$MARIADB_VERSION/mariadb-java-client-$MARIADB_VERSION.jar && \
+    curl -L -o /usr/local/activemq/lib/commons-pool-$COMMONS_POOL_VERSION.jar https://search.maven.org/remotecontent?filepath=commons-pool/commons-pool/$COMMONS_POOL_VERSION/commons-pool-$COMMONS_POOL_VERSION.jar && \
+    curl -L -o /usr/local/activemq/lib/mssql-jdbc-$MS_SQL_SERVER_VERSION.jar https://search.maven.org/remotecontent?filepath=com/microsoft/sqlserver/mssql-jdbc/$MS_SQL_SERVER_VERSION/mssql-jdbc-$MS_SQL_SERVER_VERSION.jar && \
+    chown -R activemq:activemq /usr/local/activemq && \
+    chmod +x /usr/bin/health_check.sh
+
+USER 431
+
+CMD ["/usr/local/activemq/bin/activemq",  "console","xbean:file:/etc/activemq/activemq.xml"]
+
+
