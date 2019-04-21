@@ -32,7 +32,10 @@ RUN groupadd -r activemq -g 433 && \
 
 ADD health_check.sh /usr/bin/health_check.sh
 
-RUN yum -y install curl java-1.8.0-openjdk-headless.x86_64 wget unzip;yum -y upgrade;yum clean all && \
+RUN yum -y install curl java-1.8.0-openjdk-headless.x86_64 wget unzip;yum -y upgrade && \
+    rpm --import https://mirror.umd.edu/fedora/epel//RPM-GPG-KEY-EPEL-7 && \
+    yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
+    yum -y install jq && \
     cd /tmp && \
     curl -L -o /tmp/apache-activemq-$ACTIVEMQ_VERSION-bin.tar.gz http://www.apache.org/dyn/closer.cgi?filename=/activemq/$ACTIVEMQ_VERSION/apache-activemq-$ACTIVEMQ_VERSION-bin.tar.gz\&action=download && \
     tar -xvzf apache-activemq-$ACTIVEMQ_VERSION-bin.tar.gz && \
@@ -43,7 +46,8 @@ RUN yum -y install curl java-1.8.0-openjdk-headless.x86_64 wget unzip;yum -y upg
     curl -L -o /usr/local/activemq/lib/commons-pool-$COMMONS_POOL_VERSION.jar https://search.maven.org/remotecontent?filepath=commons-pool/commons-pool/$COMMONS_POOL_VERSION/commons-pool-$COMMONS_POOL_VERSION.jar && \
     curl -L -o /usr/local/activemq/lib/mssql-jdbc-$MS_SQL_SERVER_VERSION.jar https://search.maven.org/remotecontent?filepath=com/microsoft/sqlserver/mssql-jdbc/$MS_SQL_SERVER_VERSION/mssql-jdbc-$MS_SQL_SERVER_VERSION.jar && \
     chown -R activemq:activemq /usr/local/activemq && \
-    chmod +x /usr/bin/health_check.sh
+    chmod +x /usr/bin/health_check.sh && \
+    yum clean all
 
 USER 431
 
