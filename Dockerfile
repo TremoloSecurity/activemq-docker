@@ -3,7 +3,7 @@ FROM ubuntu:18.04
 MAINTAINER Tremolo Security, Inc. - Docker <docker@tremolosecurity.com>
 
 ENV JDK_VERSION=1.8.0 \
-    ACTIVEMQ_VERSION=5.15.12 \
+    ACTIVEMQ_VERSION=5.16.0 \
     DBCP_VERSION=1.2.2 \
     MYSQL_VERSION=8.0.12 \
     MARIADB_VERSION=2.3.0 \
