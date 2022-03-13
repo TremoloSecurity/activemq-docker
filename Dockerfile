@@ -1,14 +1,15 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 MAINTAINER Tremolo Security, Inc. - Docker <docker@tremolosecurity.com>
 
-ENV JDK_VERSION=1.8.0 \
-    ACTIVEMQ_VERSION=5.16.2 \
-    DBCP_VERSION=1.2.2 \
-    MYSQL_VERSION=8.0.12 \
-    MARIADB_VERSION=2.3.0 \
+ENV JDK_VERSION=1.11.0 \
+    ACTIVEMQ_VERSION=5.16.4 \
+    DBCP_VERSION=1.4 \
+    MYSQL_VERSION=8.0.28 \
+    MARIADB_VERSION=3.0.3 \
     COMMONS_POOL_VERSION=1.6 \
-    MS_SQL_SERVER_VERSION=7.0.0.jre8
+    MS_SQL_SERVER_VERSION=10.2.0.jre11 \
+    POSTGRESQL_VERSION=42.3.3
 
 LABEL io.k8s.description="Platform for deploying kubernetes artifacts" \
       io.k8s.display-name="Kubernetes Artifact Deployer" 
@@ -19,7 +20,7 @@ RUN groupadd -r activemq -g 433 && \
 
 ADD health_check.sh /usr/bin/health_check.sh
 
-RUN apt-get update;apt-get -y install openjdk-8-jdk-headless curl apt-transport-https gnupg jq && \
+RUN apt-get update;apt-get -y install openjdk-11-jdk-headless curl apt-transport-https gnupg jq && \
     curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
     echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list && \
     apt-get update; apt-get install -y kubectl ; apt-get -y upgrade;apt-get clean;rm -rf /var/lib/apt/lists/*; \
@@ -32,6 +33,7 @@ RUN apt-get update;apt-get -y install openjdk-8-jdk-headless curl apt-transport-
     curl -L -o /usr/local/activemq/lib/mariadb-java-client-$MARIADB_VERSION.jar https://search.maven.org/remotecontent?filepath=org/mariadb/jdbc/mariadb-java-client/$MARIADB_VERSION/mariadb-java-client-$MARIADB_VERSION.jar && \
     curl -L -o /usr/local/activemq/lib/commons-pool-$COMMONS_POOL_VERSION.jar https://search.maven.org/remotecontent?filepath=commons-pool/commons-pool/$COMMONS_POOL_VERSION/commons-pool-$COMMONS_POOL_VERSION.jar && \
     curl -L -o /usr/local/activemq/lib/mssql-jdbc-$MS_SQL_SERVER_VERSION.jar https://search.maven.org/remotecontent?filepath=com/microsoft/sqlserver/mssql-jdbc/$MS_SQL_SERVER_VERSION/mssql-jdbc-$MS_SQL_SERVER_VERSION.jar && \
+    curl -L -o /usr/local/activemq/lib/postgresql-$POSTGRESQL_VERSION.jar https://search.maven.org/remotecontent?filepath=org/postgresql/postgresql/$POSTGRESQL_VERSION/postgresql-$POSTGRESQL_VERSION.jar && \
     chown -R activemq:activemq /usr/local/activemq && \
     chmod +x /usr/bin/health_check.sh
 
