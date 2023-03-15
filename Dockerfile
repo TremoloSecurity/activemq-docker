@@ -1,9 +1,9 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 MAINTAINER Tremolo Security, Inc. - Docker <docker@tremolosecurity.com>
 
 ENV JDK_VERSION=1.11.0 \
-    ACTIVEMQ_VERSION=5.16.4 \
+    ACTIVEMQ_VERSION=5.17.4 \
     DBCP_VERSION=1.4 \
     MYSQL_VERSION=8.0.28 \
     MARIADB_VERSION=3.0.3 \
