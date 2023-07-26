@@ -29,6 +29,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
 
+      - name: generate tag
+        run: |-
+            export PROJ_VERSION="5.16.6"
+            echo "Project Version: $PROJ_VERSION"
+            echo "TAG=$PROJ_VERSION-$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
+            echo "SHORT_TAG=$PROJ_VERSION" >> $GITHUB_ENV
+
       -
         name: Build and push
         id: docker_build
@@ -36,5 +43,9 @@ jobs:
         with:
           push: true
           tags: |
-            docker.io/tremolosecurity/activemq-docker
-            ghcr.io/tremolosecurity/activemq-docker
+            docker.io/tremolosecurity/activemq-docker:latest
+            docker.io/tremolosecurity/activemq-docker:${{ env.TAG }}
+            docker.io/tremolosecurity/activemq-docker:${{ env.SHORT_TAG }}
+            ghcr.io/tremolosecurity/activemq-docker:latest
+            ghcr.io/tremolosecurity/activemq-docker:${{ env.TAG }}
+            ghcr.io/tremolosecurity/activemq-docker:${{ env.SHORT_TAG }}
