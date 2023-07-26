@@ -15,6 +15,10 @@ jobs:
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@main
+      
       -
         name: Login to DockerHub
         uses: docker/login-action@v2
@@ -49,3 +53,26 @@ jobs:
             ghcr.io/tremolosecurity/activemq-docker:latest
             ghcr.io/tremolosecurity/activemq-docker:${{ env.TAG }}
             ghcr.io/tremolosecurity/activemq-docker:${{ env.SHORT_TAG }}
+
+      - uses: anchore/sbom-action@v0
+        with:
+          image: docker.io/tremolosecurity/activemq-docker:${{ env.TAG }}
+          format: spdx
+          output-file: /tmp/spdxd
+
+      - uses: anchore/sbom-action@v0
+        with:
+          image: ghcr.io/tremolosecurity/activemq-docker:${{ env.TAG }}
+          format: spdx
+          output-file: /tmp/spdxg
+    
+      - name: attach sbom to images
+        run: |-
+              cosign attach sbom --sbom /tmp/spdxd docker.io/tremolosecurity/activemq-docker:${{ env.TAG }}
+              cosign attach sbom --sbom /tmp/spdxg ghcr.io/tremolosecurity/activemq-docker:${{ env.TAG }}
+    
+              DH_SBOM_SHA=$(cosign verify --certificate-oidc-issuer-regexp='.*' --certificate-identity-regexp='.*' docker.io/tremolosecurity/activemq-docker:${{ env.TAG }} 2>/dev/null | jq -r '.[0].critical.image["docker-manifest-digest"]' | cut -c 8-)
+              GH_SBOM_SHA=$(cosign verify --certificate-oidc-issuer-regexp='.*' --certificate-identity-regexp='.*' ghcr.io/tremolosecurity/activemq-docker 2>/dev/null | jq -r '.[0].critical.image["docker-manifest-digest"]' | cut -c 8-)
+    
+              cosign sign -y docker.io/tremolosecurity/activemq-docker:sha256-$DH_SBOM_SHA.sbom
+              cosign sign -y ghcr.io/tremolosecurity/activemq-docker:sha256-$GH_SBOM_SHA.sbom
