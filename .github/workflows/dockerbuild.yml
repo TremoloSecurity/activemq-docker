@@ -56,7 +56,12 @@ jobs:
             ghcr.io/tremolosecurity/activemq-docker:latest
             ghcr.io/tremolosecurity/activemq-docker:${{ env.TAG }}
             ghcr.io/tremolosecurity/activemq-docker:${{ env.SHORT_TAG }}
-
+      
+      - name: sign images
+        run: |-
+              cosign sign -y docker.io/tremolosecurity/activemq-docker:${{ env.TAG }}
+              cosign sign -y ghcr.io/tremolosecurity/activemq-docker:${{ env.TAG }}
+      
       - uses: anchore/sbom-action@v0
         with:
           image: docker.io/tremolosecurity/activemq-docker:${{ env.TAG }}
