@@ -59,14 +59,9 @@ jobs:
       
       - name: sign images
         run: |-
-              cosign sign -y docker.io/tremolosecurity/activemq-docker:${{ env.TAG }}
               cosign sign -y ghcr.io/tremolosecurity/activemq-docker:${{ env.TAG }}
       
-      - uses: anchore/sbom-action@v0
-        with:
-          image: docker.io/tremolosecurity/activemq-docker:${{ env.TAG }}
-          format: spdx
-          output-file: /tmp/spdxd
+
 
       - uses: anchore/sbom-action@v0
         with:
@@ -76,14 +71,7 @@ jobs:
     
       - name: attach sbom to images
         run: |-
-              cosign attach sbom --sbom /tmp/spdxd docker.io/tremolosecurity/activemq-docker:${{ env.TAG }}
               cosign attach sbom --sbom /tmp/spdxg ghcr.io/tremolosecurity/activemq-docker:${{ env.TAG }}
-    
-              DH_SBOM_SHA=$(cosign verify --certificate-oidc-issuer-regexp='.*' --certificate-identity-regexp='.*' docker.io/tremolosecurity/activemq-docker:${{ env.TAG }} 2>/dev/null | jq -r '.[0].critical.image["docker-manifest-digest"]' | cut -c 8-)
               GH_SBOM_SHA=$(cosign verify --certificate-oidc-issuer-regexp='.*' --certificate-identity-regexp='.*' ghcr.io/tremolosecurity/activemq-docker:${{ env.TAG }} 2>/dev/null | jq -r '.[0].critical.image["docker-manifest-digest"]' | cut -c 8-)
-    
-              echo "DH_SBOM_SHA: $DH_SBOM_SHA"
               echo "GH_SBOM_SHA: $GH_SBOM_SHA"
-
-              cosign sign -y docker.io/tremolosecurity/activemq-docker:sha256-$DH_SBOM_SHA.sbom
               cosign sign -y ghcr.io/tremolosecurity/activemq-docker:sha256-$GH_SBOM_SHA.sbom
