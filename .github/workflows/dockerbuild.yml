@@ -38,7 +38,7 @@ jobs:
 
       - name: generate tag
         run: |-
-            export PROJ_VERSION="5.16.6"
+            export PROJ_VERSION="5.18.4"
             echo "Project Version: $PROJ_VERSION"
             echo "TAG=$PROJ_VERSION-$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
             echo "SHORT_TAG=$PROJ_VERSION" >> $GITHUB_ENV
