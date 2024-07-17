@@ -19,6 +19,7 @@ RUN groupadd -r activemq -g 433 && \
     mkdir /usr/local/activemq
 
 ADD health_check.sh /usr/bin/health_check.sh
+ADD start_amq.sh /usr/bin/start_amq.sh
 
 RUN apt-get update;apt-get -y install openjdk-11-jdk-headless curl apt-transport-https gnupg jq && \
     curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
