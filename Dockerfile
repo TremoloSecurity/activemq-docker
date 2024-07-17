@@ -36,7 +36,8 @@ RUN apt-get update;apt-get -y install openjdk-11-jdk-headless curl apt-transport
     curl -L -o /usr/local/activemq/lib/mssql-jdbc-$MS_SQL_SERVER_VERSION.jar https://search.maven.org/remotecontent?filepath=com/microsoft/sqlserver/mssql-jdbc/$MS_SQL_SERVER_VERSION/mssql-jdbc-$MS_SQL_SERVER_VERSION.jar && \
     curl -L -o /usr/local/activemq/lib/postgresql-$POSTGRESQL_VERSION.jar https://search.maven.org/remotecontent?filepath=org/postgresql/postgresql/$POSTGRESQL_VERSION/postgresql-$POSTGRESQL_VERSION.jar && \
     chown -R activemq:activemq /usr/local/activemq && \
-    chmod +x /usr/bin/health_check.sh
+    chmod +x /usr/bin/health_check.sh && \
+    cp -R /usr/local/activemq/conf /usr/local/activemq/confbak
 
 USER 431
 

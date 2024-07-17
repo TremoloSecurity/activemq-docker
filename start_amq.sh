@@ -1,12 +1,16 @@
 #!/bin/bash
 
-cp /usr/local/activemq/conf/* /etc/amqcreds/
 
-echo 'activemq.username=system' > /etc/amqcreds/credentials.properties
-echo "activemq.password=$AMQ_TOKEN" >> /etc/amqcreds/credentials.properties
-echo "guest.password=$AMQ_TOKEN" >> /etc/amqcreds/credentials.properties
 
-export ACTIVEMQ_HOME=/etc/amqcreds
+cp /usr/local/activemq/confbak/* /usr/local/activemq/conf/
+
+rm /usr/local/activemq/conf/credentials.properties
+
+echo 'activemq.username=system' > /usr/local/activemq/conf/credentials.properties
+echo "activemq.password=$AMQ_TOKEN" >> /usr/local/activemq/conf/credentials.properties
+echo "guest.password=$AMQ_TOKEN" >> /usr/local/activemq/conf/credentials.properties
+
+
 
 #cp /etc/amqcreds/credentials.properties /usr/local/activemq/conf/credentials.properties
 
