@@ -1,15 +1,14 @@
-FROM ubuntu:22.04
+FROM ubuntu:26.04
 
 MAINTAINER Tremolo Security, Inc. - Docker <docker@tremolosecurity.com>
 
-ENV JDK_VERSION=1.11.0 \
-    ACTIVEMQ_VERSION=5.18.4 \
+ENV ACTIVEMQ_VERSION=6.3.2 \
     DBCP_VERSION=1.4 \
-    MYSQL_VERSION=8.0.28 \
-    MARIADB_VERSION=3.0.3 \
+    MYSQL_VERSION=26.7.0 \
+    MARIADB_VERSION=3.5.10 \
     COMMONS_POOL_VERSION=1.6 \
-    MS_SQL_SERVER_VERSION=10.2.0.jre11 \
-    POSTGRESQL_VERSION=42.3.3
+    MS_SQL_SERVER_VERSION=13.4.0.jre11 \
+    POSTGRESQL_VERSION=42.7.13
 
 LABEL io.k8s.description="Platform for deploying kubernetes artifacts" \
       io.k8s.display-name="Kubernetes Artifact Deployer" 
@@ -21,7 +20,7 @@ RUN groupadd -r activemq -g 433 && \
 ADD health_check.sh /usr/bin/health_check.sh
 ADD start_amq.sh /usr/bin/start_amq.sh
 
-RUN apt-get update;apt-get -y install openjdk-11-jdk-headless curl apt-transport-https gnupg jq && \
+RUN apt-get update;apt-get -y install openjdk-21-jre-headless curl apt-transport-https gnupg jq && \
     curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
     echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list && \
     apt-get update; apt-get install -y kubectl ; apt-get -y upgrade;apt-get clean;rm -rf /var/lib/apt/lists/*; \
@@ -30,7 +29,7 @@ RUN apt-get update;apt-get -y install openjdk-11-jdk-headless curl apt-transport
     tar -xvzf apache-activemq-$ACTIVEMQ_VERSION-bin.tar.gz && \
     mv apache-activemq-$ACTIVEMQ_VERSION/* /usr/local/activemq/ && \
     curl -L -o /usr/local/activemq/lib/commons-dbcp-$DBCP_VERSION.jar  https://search.maven.org/remotecontent?filepath=commons-dbcp/commons-dbcp/$DBCP_VERSION/commons-dbcp-$DBCP_VERSION.jar && \
-    curl -L -o /usr/local/activemq/lib/mysql-connector-java-$MYSQL_VERSION.jar https://search.maven.org/remotecontent?filepath=mysql/mysql-connector-java/$MYSQL_VERSION/mysql-connector-java-$MYSQL_VERSION.jar && \
+    curl -L -o /usr/local/activemq/lib/mysql-connector-java-$MYSQL_VERSION.jar https://search.maven.org/remotecontent?filepath=com/mysql/mysql-connector-j/$MYSQL_VERSION/mysql-connector-j-$MYSQL_VERSION.jar && \
     curl -L -o /usr/local/activemq/lib/mariadb-java-client-$MARIADB_VERSION.jar https://search.maven.org/remotecontent?filepath=org/mariadb/jdbc/mariadb-java-client/$MARIADB_VERSION/mariadb-java-client-$MARIADB_VERSION.jar && \
     curl -L -o /usr/local/activemq/lib/commons-pool-$COMMONS_POOL_VERSION.jar https://search.maven.org/remotecontent?filepath=commons-pool/commons-pool/$COMMONS_POOL_VERSION/commons-pool-$COMMONS_POOL_VERSION.jar && \
     curl -L -o /usr/local/activemq/lib/mssql-jdbc-$MS_SQL_SERVER_VERSION.jar https://search.maven.org/remotecontent?filepath=com/microsoft/sqlserver/mssql-jdbc/$MS_SQL_SERVER_VERSION/mssql-jdbc-$MS_SQL_SERVER_VERSION.jar && \
