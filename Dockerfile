@@ -2,7 +2,7 @@ FROM ubuntu:26.04
 
 MAINTAINER Tremolo Security, Inc. - Docker <docker@tremolosecurity.com>
 
-ENV ACTIVEMQ_VERSION=6.3.2 \
+ENV ACTIVEMQ_VERSION=5.19.11 \
     DBCP_VERSION=1.4 \
     MYSQL_VERSION=26.7.0 \
     MARIADB_VERSION=3.5.10 \
